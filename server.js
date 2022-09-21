@@ -42,6 +42,19 @@ app.put('/api/tasks/:id', async (req, res, next) => {
   }
 });
 
+app.get('/api/tasks/filter/:difficulty', async (req, res, next) => {
+  try {
+    const tasks = await Task.findAll({
+      where: {
+        difficulty: req.params.difficulty,
+      },
+    });
+    res.send(tasks);
+  } catch (ex) {
+    next(ex);
+  }
+});
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 const port = process.env.PORT || 3000;
@@ -62,7 +75,11 @@ const init = async () => {
         description: "do what you're doing",
         difficulty: 'Hard',
       }),
-      Task.create({ name: 'buy milk', description: 'no one likes dry cereal', difficulty: 'Easy' }),
+      Task.create({
+        name: 'buy milk',
+        description: 'no one likes dry cereal',
+        difficulty: 'Easy',
+      }),
       Task.create({ name: 'do laundry' }),
     ]);
     //sync database and seed data here

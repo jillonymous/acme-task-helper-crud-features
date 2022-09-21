@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { destroyTask, updateTask, createTask } from './store';
 
 const Tasks = () => {
@@ -10,6 +10,13 @@ const Tasks = () => {
   const [difficulty, setDifficulty] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  let filtered = tasks;
+  if (pathname.startsWith('/tasks/filter')) {
+    filtered = tasks.filter(
+      (task) => task.difficulty === pathname.split('/')[3]
+    );
+  }
   const { id } = useParams();
   useEffect(() => {
     const task = tasks.find((task) => task.id === id);
@@ -35,12 +42,17 @@ const Tasks = () => {
   return (
     <div>
       <ul>
-        {tasks.map((task) => {
+        {filtered.map((task) => {
           return (
             <li key={task.id} className={task.complete ? 'complete' : ''}>
               <Link to={`/tasks/${task.id}`}>{task.name}</Link>
               <p>{task.description}</p>
-              <p>Difficulty: {task.difficulty}</p>
+              <p>
+                Difficulty:{' '}
+                <Link to={`/tasks/filter/${task.difficulty}`}>
+                  {task.difficulty}
+                </Link>
+              </p>
             </li>
           );
         })}
