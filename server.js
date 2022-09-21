@@ -6,66 +6,70 @@ app.use(express.json());
 
 app.use('/dist', express.static('dist'));
 
-app.get('/api/tasks', async(req, res, next)=> {
+app.get('/api/tasks', async (req, res, next) => {
   try {
     res.send(await Task.findAll());
-  }
-  catch(ex){
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.post('/api/tasks', async(req, res, next)=> {
+app.post('/api/tasks', async (req, res, next) => {
   try {
     res.status(201).send(await Task.create(req.body));
-  }
-  catch(ex){
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.delete('/api/tasks/:id', async(req, res, next)=> {
+app.delete('/api/tasks/:id', async (req, res, next) => {
   try {
     const task = await Task.findByPk(req.params.id);
     await task.destroy();
     res.sendStatus(204);
-  }
-  catch(ex){
+  } catch (ex) {
     next(ex);
   }
-}); 
+});
 
-
-app.put('/api/tasks/:id', async(req, res, next)=> {
+app.put('/api/tasks/:id', async (req, res, next) => {
   try {
     const task = await Task.findByPk(req.params.id);
     await task.update(req.body);
     res.send(task);
-  }
-  catch(ex){
+  } catch (ex) {
     next(ex);
   }
-}); 
+});
 
-app.get('/', (req, res)=> res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 const port = process.env.PORT || 3000;
 
-const init = async()=> {
+const init = async () => {
   try {
     await conn.sync({ force: true });
     await Promise.all([
-      Task.create({ name: 'clean clost', complete: true }),
-      Task.create({ name: 'study react', complete: true }),
-      Task.create({ name: 'buy milk'}),
-      Task.create({ name: 'do laundry'}),
+      Task.create({
+        name: 'clean clost',
+        complete: true,
+        description: 'get rid of those cardigans you never wear',
+        difficulty: 'Medium',
+      }),
+      Task.create({
+        name: 'study react',
+        complete: true,
+        description: "do what you're doing",
+        difficulty: 'Hard',
+      }),
+      Task.create({ name: 'buy milk', description: 'no one likes dry cereal', difficulty: 'Easy' }),
+      Task.create({ name: 'do laundry' }),
     ]);
-  //sync database and seed data here
-  app.listen(port, ()=> console.log(`listening on port ${port}`));
-  }
-  catch(ex){
+    //sync database and seed data here
+    app.listen(port, () => console.log(`listening on port ${port}`));
+  } catch (ex) {
     console.log(ex);
   }
-}
+};
 
 init();

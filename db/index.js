@@ -1,3 +1,4 @@
+const { ENUM } = require('sequelize');
 const Sequelize = require('sequelize');
 
 const { UUID, UUIDV4, STRING, BOOLEAN } = Sequelize;
@@ -19,6 +20,13 @@ const Task = conn.define('task', {
   complete: {
     type: BOOLEAN,
     defaultValue: false
+  },
+  description: {
+    type: STRING,
+  },
+  difficulty: {
+    type: ENUM,
+    values: ['Easy', 'Medium', 'Hard']
   }
 });
 
